@@ -74,6 +74,7 @@ export default function HomeScreen() {
 
   // Define the join method called after clicking the join channel button
   const join = async () => {
+    console.log('join clicked')
     if (isJoined) {
       return;
     }
@@ -111,6 +112,7 @@ export default function HomeScreen() {
 
   // Define the leave method called after clicking the leave channel button
   const leave = () => {
+    console.log('leave clicked')
     try {
       // Call leaveChannel method to leave the channel
       agoraEngineRef.current?.leaveChannel();
@@ -125,12 +127,19 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{height: 40}}></View>
       <Text style={styles.head}>Agora Voice Calling Quickstart</Text>
+      <Text>{`ENV test: ${process.env.EXPO_PUBLIC_TESTNAME || "empty"}`}</Text>
+      <View style={{height: 40}}></View>
       <View style={styles.btnContainer}>
-        <Text onPress={join} style={styles.button}>
+        <Text onPress={
+          join
+        } style={styles.button}>
           Join Channel
         </Text>
-        <Text onPress={leave} style={styles.button}>
+        <Text onPress={
+          leave
+        } style={styles.button}>
           Leave Channel
         </Text>
       </View>

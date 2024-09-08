@@ -23,7 +23,15 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.enzokwan.agoratest1"
+      "package": "com.enzokwan.agoratest1",
+      "permissions": [
+        "INTERNET",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS",
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "CAMERA"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +43,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6050aaf4-8762-46cc-9792-97f0bb197da2"
+      }
     }
   }
 }
