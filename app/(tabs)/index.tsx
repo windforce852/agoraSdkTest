@@ -12,10 +12,15 @@ import {
 } from 'react-native-agora';
 
 // Define basic information
-export const appId = process.env.EXPO_PUBLIC_APP_ID;
-export const token = process.env.EXPO_PUBLIC_TOKEN;
-export const channelName = 'test';
-export const uid = 0; // Local user Uid, no need to modify
+// export const appId = process.env.EXPO_PUBLIC_APP_ID;
+// export const token = process.env.EXPO_PUBLIC_TOKEN;
+// export const channelName = 'test';
+// export const uid = 0; // Local user Uid, no need to modify
+
+export const appId = ""
+export const token = ""
+export const channelName = ""
+export const uid = 1
 
 export default function HomeScreen() {
   const agoraEngineRef = useRef<IRtcEngine>(); // IRtcEngine instance
@@ -80,6 +85,7 @@ export default function HomeScreen() {
     }
     try {
       if (isHost) {
+        console.log('is host')
         // Join the channel as a broadcaster
         agoraEngineRef.current?.joinChannel(token, channelName, uid, {
           // Set channel profile to live broadcast
@@ -105,6 +111,7 @@ export default function HomeScreen() {
         });
       }
     } catch (e) {
+      console.log('catching')
       console.log(e);
     }
   };
