@@ -1,4 +1,4 @@
-import { Image, StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
+import { Image, StyleSheet, View, Text, Pressable, ScrollView, TextInput, Dimensions } from 'react-native';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { useRef, useState, useEffect } from 'react';
 
@@ -17,10 +17,12 @@ import {
 // export const channelName = 'test';
 // export const uid = 0; // Local user Uid, no need to modify
 
-export const appId = ""
-export const token = ""
-export const channelName = ""
-export const uid = 1
+const { width, height } = Dimensions.get('window');
+
+export const appId = "52904c6509174b7ea50b0ba49c79c7b4"
+// export const token = "00652904c6509174b7ea50b0ba49c79c7b4IABFAExpWIIG5SETbVUk/PXQlG931Ma9djAejkywYepwyj6q6tDbbJCkIgBksuF9s/AEZwQAAQAbowNnAgAbowNnAwAbowNnBAAbowNn"
+// export const channelName = "Suceess1"
+// export const uid = 0
 
 export default function HomeScreen() {
   const agoraEngineRef = useRef<IRtcEngine>(); // IRtcEngine instance
@@ -28,7 +30,19 @@ export default function HomeScreen() {
   const [isHost, setIsHost] = useState(true); // User role
   const [remoteUid, setRemoteUid] = useState(0); // Uid of the remote user
   const [message, setMessage] = useState(''); // User prompt message
+  const [errorCode, setErrorCode] = useState('');
   const eventHandler = useRef<IRtcEngineEventHandler>(); // Callback functions
+
+    // State variables for dynamic input
+    const [inputToken, setInputToken] = useState('');
+    const [inputChannelName, setInputChannelName] = useState('');
+    const [inputUid, setInputUid] = useState('');
+  
+    // State variables to store the actual token, channelName, and uid after pressing the button
+    const [token, setToken] = useState('');
+    const [channelName, setChannelName] = useState('');
+    const [uid, setUid] = useState(0);
+
 
   useEffect(() => {
     // Initialize the engine when the App starts
@@ -87,7 +101,7 @@ export default function HomeScreen() {
       if (isHost) {
         console.log('is host')
         // Join the channel as a broadcaster
-        agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+        const result = agoraEngineRef.current?.joinChannel(token, channelName, uid, {
           // Set channel profile to live broadcast
           channelProfile: ChannelProfileType.ChannelProfileCommunication,
           // Set user role to broadcaster
@@ -97,9 +111,10 @@ export default function HomeScreen() {
           // Automatically subscribe to all audio streams
           autoSubscribeAudio: true,
         });
+        setErrorCode(result?.toString() || "");
       } else {
         // Join the channel as an audience
-        agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+        const result = agoraEngineRef.current?.joinChannel(token, channelName, uid, {
           // Set channel profile to live broadcast
           channelProfile: ChannelProfileType.ChannelProfileCommunication,
           // Set user role to audience
@@ -109,6 +124,7 @@ export default function HomeScreen() {
           // Automatically subscribe to all audio streams
           autoSubscribeAudio: true,
         });
+        setErrorCode(result?.toString() || "");
       }
     } catch (e) {
       console.log('catching')
@@ -129,6 +145,13 @@ export default function HomeScreen() {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const setupCredentials = () => {
+    setToken(inputToken);
+    setChannelName(inputChannelName);
+    setUid(Number(inputUid));
+    console.log(`setup cred: ${inputToken}, ${inputChannelName}, ${inputUid}`)
   };
 
 
@@ -163,7 +186,37 @@ export default function HomeScreen() {
         ) : (
           <Text>Waiting for remote user to join</Text>
         )}
+        <Text>{`Join Response Code: ${errorCode}`}</Text>
         <Text>{message}</Text>
+        
+
+        <View style={{ width: width * 0.8, justifyContent: "center", alignItems: "center"}}>
+          <Text>Token</Text>
+        <TextInput
+            placeholder="Enter Token"
+            value={inputToken}
+            onChangeText={setInputToken} // Updates inputToken state
+            style={styles.input}
+          />
+          <Text>Channel Name</Text>
+          <TextInput
+            placeholder="Enter Channel Name"
+            value={inputChannelName}
+            onChangeText={setInputChannelName} // Updates inputChannelName state
+            style={styles.input}
+          />
+          <Text>UID</Text>
+          <TextInput
+            placeholder="Enter UID"
+            value={inputUid}
+            onChangeText={setInputUid} // Updates inputUid state
+            style={styles.input}
+            keyboardType="numeric"
+          />
+          <Pressable onPressOut={setupCredentials}>
+            <Text style={{color: "green"}}>Setup cred</Text>
+          </Pressable>
+        </View>
       </ScrollView>
 
     </View>
@@ -190,6 +243,14 @@ const styles = StyleSheet.create({
   videoView: { width: '90%', height: 200 },
   btnContainer: { flexDirection: 'row', justifyContent: 'center' },
   head: { fontSize: 20 },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    width: '100%',
+  },
 });
 const getPermission = async () => {
   if (Platform.OS === 'android') {
